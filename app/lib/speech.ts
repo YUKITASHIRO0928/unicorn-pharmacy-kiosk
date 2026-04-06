@@ -1,5 +1,8 @@
 // VOICEVOX音声合成 + Web Speech APIフォールバック
-// VOICEVOX: http://localhost:50021 で起動しておく
+// VOICEVOX起動方法（Windows）:
+//   VOICEVOX.exe を「--cors_policy_mode all」オプション付きで起動する
+//   または VOICEVOX設定画面 → 「CORSポリシー」→「全てのオリジンを許可」に変更
+//   これにより https:// のサイトからでも localhost:50021 に接続できる
 
 export type CharacterVoice = "medicoorn" | "lunabelle";
 

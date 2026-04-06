@@ -23,13 +23,13 @@ export default function GenericDrugScreen({
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    speak("ジェネリック医薬品のご準備でよろしいでしょうか？", character);
+    speak("ジェネリックいやくひんのご準備でよろしいでしょうか？", character);
     return () => stopSpeaking();
   }, [character]);
 
   const handleBrandClick = () => {
     setShowPopup(true);
-    speak("先発品を選択された場合、選定療養費として追加の費用がかかります", character);
+    speak("せんぱつひんを選択された場合、せんていりょうようひとして追加の費用がかかります", character);
   };
 
   return (
