@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import UnicornCharacter from "../UnicornCharacter";
 import SpeechBubble from "../SpeechBubble";
@@ -30,19 +30,30 @@ export default function CompleteScreen({
     ? `ばんごうふだ${receptionNumber}番をお取りになり、処方せんとおくすり手帳をトレイに入れて、マイナンバーの読み取りをお願いします`
     : `ばんごうふだ${receptionNumber}番をお取りになり、処方せんをトレイに入れて、マイナンバーの読み取りをお願いします`;
 
-  useEffect(() => {
-    // 少し遅延して音声再生（画面遷移アニメーション完了後）
-    const speechTimer = setTimeout(() => {
-      speak(speechText, character);
-    }, 500);
+  // refで保持して依存配列を安定させる
+  const speechTextRef = useRef(speechText);
+  const characterRef = useRef(character);
+  const onCompleteRef = useRef(onComplete);
+  speechTextRef.current = speechText;
+  characterRef.current = character;
+  onCompleteRef.current = onComplete;
 
-    const resetTimer = setTimeout(onComplete, TRANSITION_SECONDS * 1000);
+  useEffect(() => {
+    // 画面遷移完了後に音声再生
+    const speechTimer = setTimeout(() => {
+      speak(speechTextRef.current, characterRef.current);
+    }, 600);
+
+    const resetTimer = setTimeout(() => {
+      onCompleteRef.current();
+    }, TRANSITION_SECONDS * 1000);
+
     return () => {
       clearTimeout(speechTimer);
       clearTimeout(resetTimer);
       stopSpeaking();
     };
-  }, [character, speechText, onComplete]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const sparkles = useMemo(() => {
     return Array.from({ length: 8 }, (_, i) => ({
