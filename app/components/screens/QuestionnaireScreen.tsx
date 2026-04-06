@@ -42,13 +42,13 @@ export default function QuestionnaireScreen({
   if (showQR) {
     return (
       <motion.div
-        className="flex flex-col items-center h-full px-[4vw] relative z-10"
-        style={{ paddingTop: "3vh", paddingBottom: "3vh", gap: "2.5vh" }}
+        className="flex flex-col items-center justify-between h-full px-[5vw] relative z-10"
+        style={{ paddingTop: "4vh", paddingBottom: "4vh" }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
         <SpeechBubble text="QRコードを読み取ってね！" show />
-        <UnicornCharacter character={character} pose="happy" sizeVh={18} />
+        <UnicornCharacter character={character} pose="happy" sizeVh={16} />
         <motion.div
           className="rounded-[1.5rem] shadow-[0_4px_24px_rgba(139,95,191,0.15)]"
           style={{
@@ -62,10 +62,13 @@ export default function QuestionnaireScreen({
         >
           <QRCodeSVG value={QUESTIONNAIRE_URL} size={250} />
         </motion.div>
-        <p className="text-[1.4rem] text-[#7c5bad] text-center font-medium leading-relaxed">
+        <p
+          className="text-[#7c5bad] text-center font-medium leading-relaxed"
+          style={{ fontSize: "clamp(1rem, 2vh, 2rem)" }}
+        >
           スマートフォンのカメラで<br />QRコードを読み取ってください
         </p>
-        <div className="w-full" style={{ maxWidth: "80vw" }}>
+        <div className="w-full shrink-0" style={{ maxWidth: "85vw" }}>
           <BigButton label="読み取りました" onClick={onSmartphone} color="positive" size="large" icon="✓" />
         </div>
       </motion.div>
@@ -74,18 +77,18 @@ export default function QuestionnaireScreen({
 
   return (
     <motion.div
-      className="flex flex-col items-center h-full px-[4vw] relative z-10"
-      style={{ paddingTop: "3vh", paddingBottom: "3vh", gap: "2.5vh" }}
+      className="flex flex-col items-center justify-between h-full px-[5vw] relative z-10"
+      style={{ paddingTop: "4vh", paddingBottom: "4vh" }}
       initial={{ opacity: 0, x: 100 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -100 }}
     >
       <div />
       <SpeechBubble text="アンケートのご記入をお願いします" show />
-      <div className="flex-1 flex items-center justify-center min-h-0">
-        <UnicornCharacter character={character} pose="walking" sizeVh={30} />
+      <div className="flex-1 flex items-center justify-center min-h-0 overflow-hidden" style={{ padding: "1vh 0" }}>
+        <UnicornCharacter character={character} pose="walking" sizeVh={28} />
       </div>
-      <div className="flex flex-col w-full" style={{ gap: "2vh", maxWidth: "80vw" }}>
+      <div className="flex flex-col w-full shrink-0" style={{ gap: "1.5vh", maxWidth: "85vw" }}>
         <BigButton label="スマホで入力する" onClick={handleSmartphone} color="primary" size="large" icon="📱" />
         <BigButton label="手書きで記入する" onClick={handleHandwritten} color="secondary" size="large" icon="✏️" />
       </div>
