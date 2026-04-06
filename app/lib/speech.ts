@@ -187,28 +187,37 @@ function speakWithWebSpeech(text: string, character: CharacterVoice) {
 export async function speak(text: string, character: CharacterVoice) {
   if (typeof window === "undefined") return;
 
+  console.log("[speak] called:", text.substring(0, 30), "...", "cache:", audioCache.has(cacheKey(text, character)), "voicevox:", voicevoxAvailable);
+
   const gen = ++speakGeneration;
   cancelAll();
 
   // キャッシュヒット → 即再生（接続チェックすらしない）
   const key = cacheKey(text, character);
   if (audioCache.has(key)) {
+    console.log("[speak] cache hit, playing");
     const audio = new Audio(audioCache.get(key)!);
     currentAudio = audio;
     audio.onended = () => { if (currentAudio === audio) currentAudio = null; };
-    try { await audio.play(); return; } catch { /* fall through */ }
+    try { await audio.play(); return; } catch (e) { console.error("[speak] cache play failed:", e); }
   }
 
   // キャッシュミス → VOICEVOX確認して合成
-  if (voicevoxAvailable === null) await checkVoicevox();
-  if (gen !== speakGeneration) return;
+  if (voicevoxAvailable === null) {
+    console.log("[speak] checking voicevox...");
+    await checkVoicevox();
+  }
+  if (gen !== speakGeneration) { console.log("[speak] cancelled (gen mismatch after check)"); return; }
 
   if (voicevoxAvailable) {
+    console.log("[speak] voicevox available, synthesizing...");
     const success = await speakWithVoicevox(text, character, gen);
-    if (success) return;
-    if (gen !== speakGeneration) return;
+    if (success) { console.log("[speak] voicevox success"); return; }
+    if (gen !== speakGeneration) { console.log("[speak] cancelled (gen mismatch after synth)"); return; }
+    console.log("[speak] voicevox failed, falling back");
   }
 
+  console.log("[speak] using web speech api");
   speakWithWebSpeech(text, character);
 }
 

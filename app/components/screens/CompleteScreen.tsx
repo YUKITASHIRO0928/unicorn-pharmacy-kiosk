@@ -38,18 +38,16 @@ export default function CompleteScreen({
   onCompleteRef.current = onComplete;
   speechTextRef.current = speechText;
 
+  // 他の画面と同じパターンで音声再生（直接呼び出し）
   useEffect(() => {
-    // 画面遷移アニメーション完了を確実に待つ
-    const timer = setTimeout(() => {
-      speak(speechTextRef.current, characterRef.current);
-    }, 1000);
+    console.log("[CompleteScreen] speaking:", speechTextRef.current);
+    speak(speechTextRef.current, characterRef.current);
 
     const resetTimer = setTimeout(() => {
       onCompleteRef.current();
     }, TRANSITION_SECONDS * 1000);
 
     return () => {
-      clearTimeout(timer);
       clearTimeout(resetTimer);
       stopSpeaking();
     };
