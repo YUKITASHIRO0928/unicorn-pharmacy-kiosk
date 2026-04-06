@@ -127,6 +127,24 @@ function cancelAll() {
   }
 }
 
+// ========== 音声再生（完了まで待つ） ==========
+function playAudioAndWait(audioUrl: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    cancelAll();
+    const audio = new Audio(audioUrl);
+    currentAudio = audio;
+    audio.onended = () => {
+      if (currentAudio === audio) currentAudio = null;
+      resolve();
+    };
+    audio.onerror = () => {
+      if (currentAudio === audio) currentAudio = null;
+      reject(new Error("audio playback error"));
+    };
+    audio.play().catch(reject);
+  });
+}
+
 // ========== VOICEVOX再生 ==========
 async function speakWithVoicevox(text: string, character: CharacterVoice, gen: number): Promise<boolean> {
   try {
@@ -160,14 +178,13 @@ async function speakWithVoicevox(text: string, character: CharacterVoice, gen: n
     if (gen !== speakGeneration) return false;
     cancelAll();
 
-    const audio = new Audio(audioUrl);
-    currentAudio = audio;
-    audio.onended = () => {
-      if (currentAudio === audio) currentAudio = null;
-    };
-    await audio.play();
-    console.log("[voicevox] playing");
-    return true;
+    try {
+      await playAudioAndWait(audioUrl);
+      console.log("[voicevox] playback complete");
+      return true;
+    } catch {
+      return false;
+    }
   } catch (e) {
     console.error("[voicevox] error:", e);
     return false;
@@ -201,10 +218,10 @@ export async function speak(text: string, character: CharacterVoice) {
   const key = cacheKey(text, character);
   if (audioCache.has(key)) {
     console.log("[speak] cache hit, playing");
-    const audio = new Audio(audioCache.get(key)!);
-    currentAudio = audio;
-    audio.onended = () => { if (currentAudio === audio) currentAudio = null; };
-    try { await audio.play(); return; } catch (e) { console.error("[speak] cache play failed:", e); }
+    try {
+      await playAudioAndWait(audioCache.get(key)!);
+      return;
+    } catch (e) { console.error("[speak] cache play failed:", e); }
   }
 
   // キャッシュミス → VOICEVOX確認して合成

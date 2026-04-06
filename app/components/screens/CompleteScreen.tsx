@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import UnicornCharacter from "../UnicornCharacter";
 import SpeechBubble from "../SpeechBubble";
@@ -14,7 +14,7 @@ type CompleteScreenProps = {
   onComplete: () => void;
 };
 
-const TRANSITION_SECONDS = 15;
+const TRANSITION_SECONDS = 5;
 
 export default function CompleteScreen({
   character,
@@ -31,6 +31,7 @@ export default function CompleteScreen({
     ? `ばんごうふだ${receptionNumber}番をお取りください。処方せんとおくすり手帳をトレイに入れて、マイナンバーの読み取りをお願いします`
     : `ばんごうふだ${receptionNumber}番をお取りください。処方せんをトレイに入れて、マイナンバーの読み取りをお願いします`;
 
+  const [timerStarted, setTimerStarted] = useState(false);
   const characterRef = useRef(character);
   const onCompleteRef = useRef(onComplete);
   const speechTextRef = useRef(speechText);
@@ -38,17 +39,29 @@ export default function CompleteScreen({
   onCompleteRef.current = onComplete;
   speechTextRef.current = speechText;
 
-  // 他の画面と同じパターンで音声再生（直接呼び出し）
+  // 音声再生 → 再生完了後に15秒タイマー開始
   useEffect(() => {
-    console.log("[CompleteScreen] speaking:", speechTextRef.current);
-    speak(speechTextRef.current, characterRef.current);
+    let resetTimer: ReturnType<typeof setTimeout> | null = null;
+    let cancelled = false;
 
-    const resetTimer = setTimeout(() => {
-      onCompleteRef.current();
-    }, TRANSITION_SECONDS * 1000);
+    async function run() {
+      console.log("[CompleteScreen] speaking:", speechTextRef.current);
+      await speak(speechTextRef.current, characterRef.current);
+      console.log("[CompleteScreen] speech finished");
+
+      if (!cancelled) {
+        setTimerStarted(true);
+        resetTimer = setTimeout(() => {
+          onCompleteRef.current();
+        }, TRANSITION_SECONDS * 1000);
+      }
+    }
+
+    run();
 
     return () => {
-      clearTimeout(resetTimer);
+      cancelled = true;
+      if (resetTimer) clearTimeout(resetTimer);
       stopSpeaking();
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -149,20 +162,20 @@ export default function CompleteScreen({
         </div>
       </motion.div>
 
-      <motion.div
+      {/* 進捗バー（音声再生完了後に開始） */}
+      <div
         className="w-full rounded-full bg-[#e0d4f0]/40 overflow-hidden shrink-0"
         style={{ maxWidth: "85vw", height: "0.8vh" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
       >
-        <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-[#9b7cc0] to-[#d4699e]"
-          initial={{ width: "100%" }}
-          animate={{ width: "0%" }}
-          transition={{ duration: TRANSITION_SECONDS, ease: "linear" }}
-        />
-      </motion.div>
+        {timerStarted && (
+          <motion.div
+            className="h-full rounded-full bg-gradient-to-r from-[#9b7cc0] to-[#d4699e]"
+            initial={{ width: "100%" }}
+            animate={{ width: "0%" }}
+            transition={{ duration: TRANSITION_SECONDS, ease: "linear" }}
+          />
+        )}
+      </div>
     </motion.div>
   );
 }

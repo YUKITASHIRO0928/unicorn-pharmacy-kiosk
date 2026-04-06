@@ -34,9 +34,9 @@ export default function QuestionnaireScreen({
     speak("QRコードをスマートフォンで読み取ってください", character);
   };
 
-  const handleHandwritten = () => {
-    speak("用紙をお渡ししますので、お席でお待ちください", character);
-    setTimeout(onHandwritten, 2000);
+  const handleHandwritten = async () => {
+    await speak("用紙をお渡ししますので、お席でお待ちください", character);
+    onHandwritten();
   };
 
   if (showQR) {
