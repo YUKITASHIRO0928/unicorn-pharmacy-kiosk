@@ -93,8 +93,8 @@ async function preloadAllAudio() {
 
   // 3. 番号付きセリフ（低優先、バックグラウンド）
   for (let i = 1; i <= 20; i++) {
-    const withoutBook = `ばんごうふだ${i}番をお取りになり、処方せんをトレイに入れて、マイナンバーの読み取りをお願いします`;
-    const withBook = `ばんごうふだ${i}番をお取りになり、処方せんとおくすり手帳をトレイに入れて、マイナンバーの読み取りをお願いします`;
+    const withoutBook = `ばんごうふだ${i}番をお取りください。処方せんをトレイに入れて、マイナンバーの読み取りをお願いします`;
+    const withBook = `ばんごうふだ${i}番をお取りください。処方せんとおくすり手帳をトレイに入れて、マイナンバーの読み取りをお願いします`;
     await Promise.all([
       synthesizeToCache(withoutBook, "medicoorn"),
       synthesizeToCache(withoutBook, "lunabelle"),

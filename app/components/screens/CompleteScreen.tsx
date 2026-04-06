@@ -26,30 +26,30 @@ export default function CompleteScreen({
     ? "処方せんとおくすり手帳をトレイに入れてください"
     : "処方せんをトレイに入れてください";
 
+  // 音声テキスト（短くシンプルに）
   const speechText = hasMedicineBook
-    ? `ばんごうふだ${receptionNumber}番をお取りになり、処方せんとおくすり手帳をトレイに入れて、マイナンバーの読み取りをお願いします`
-    : `ばんごうふだ${receptionNumber}番をお取りになり、処方せんをトレイに入れて、マイナンバーの読み取りをお願いします`;
+    ? `ばんごうふだ${receptionNumber}番をお取りください。処方せんとおくすり手帳をトレイに入れて、マイナンバーの読み取りをお願いします`
+    : `ばんごうふだ${receptionNumber}番をお取りください。処方せんをトレイに入れて、マイナンバーの読み取りをお願いします`;
 
-  // refで保持して依存配列を安定させる
-  const speechTextRef = useRef(speechText);
   const characterRef = useRef(character);
   const onCompleteRef = useRef(onComplete);
-  speechTextRef.current = speechText;
+  const speechTextRef = useRef(speechText);
   characterRef.current = character;
   onCompleteRef.current = onComplete;
+  speechTextRef.current = speechText;
 
   useEffect(() => {
-    // 画面遷移完了後に音声再生
-    const speechTimer = setTimeout(() => {
+    // 画面遷移アニメーション完了を確実に待つ
+    const timer = setTimeout(() => {
       speak(speechTextRef.current, characterRef.current);
-    }, 600);
+    }, 1000);
 
     const resetTimer = setTimeout(() => {
       onCompleteRef.current();
     }, TRANSITION_SECONDS * 1000);
 
     return () => {
-      clearTimeout(speechTimer);
+      clearTimeout(timer);
       clearTimeout(resetTimer);
       stopSpeaking();
     };
@@ -94,7 +94,6 @@ export default function CompleteScreen({
 
       <UnicornCharacter character={character} pose="happy" sizeVh={20} floating />
 
-      {/* 受付番号カード */}
       <motion.div
         className="rounded-[2rem] text-center relative z-10 shrink-0"
         style={{
@@ -125,7 +124,6 @@ export default function CompleteScreen({
         </p>
       </motion.div>
 
-      {/* 案内カード */}
       <motion.div
         className="rounded-[1.5rem] w-full relative z-10 shrink-0"
         style={{
@@ -153,7 +151,6 @@ export default function CompleteScreen({
         </div>
       </motion.div>
 
-      {/* 進捗バー（15秒） */}
       <motion.div
         className="w-full rounded-full bg-[#e0d4f0]/40 overflow-hidden shrink-0"
         style={{ maxWidth: "85vw", height: "0.8vh" }}
