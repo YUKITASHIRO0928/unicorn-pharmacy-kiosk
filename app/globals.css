@@ -86,6 +86,8 @@ body {
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .animate-sparkle {
@@ -154,4 +156,25 @@ body {
   );
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
+}
+
+/* ========== 背景エフェクト用CSSアニメーション（GPU最適化） ========== */
+
+@keyframes cloud-drift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(30px, -6px, 0); }
+}
+
+@keyframes heart-float {
+  0%, 100% { opacity: 0.2; transform: translate3d(0, 0, 0) scale(0.9); }
+  50% { opacity: 0.55; transform: translate3d(0, -12px, 0) scale(1.08); }
+}
+
+@keyframes animate-rainbow-pulse {
+  0%, 100% { opacity: 0.18; }
+  50% { opacity: 0.3; }
+}
+
+.animate-rainbow-pulse {
+  animation: animate-rainbow-pulse 8s ease-in-out infinite;
 }
