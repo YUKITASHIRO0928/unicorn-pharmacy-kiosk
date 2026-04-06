@@ -30,8 +30,8 @@ export default function SpeechBubble({ text, show }: SpeechBubbleProps) {
           >
             <p
               className="font-bold text-center leading-relaxed"
-              style={{ fontSize: "clamp(1.2rem, 3vh, 3rem)" }}
               style={{
+                fontSize: "clamp(1.2rem, 3vh, 3rem)",
                 color: "#5a3d7a",
                 fontFeatureSettings: "'palt'",
               }}
