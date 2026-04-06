@@ -10,22 +10,39 @@ import { speak, stopSpeaking } from "../../lib/speech";
 type CompleteScreenProps = {
   character: CharacterType;
   receptionNumber: number;
+  hasMedicineBook: boolean;
   onComplete: () => void;
 };
+
+const TRANSITION_SECONDS = 15;
 
 export default function CompleteScreen({
   character,
   receptionNumber,
+  hasMedicineBook,
   onComplete,
 }: CompleteScreenProps) {
+  const trayText = hasMedicineBook
+    ? "処方せんとおくすり手帳をトレイに入れてください"
+    : "処方せんをトレイに入れてください";
+
+  const speechText = hasMedicineBook
+    ? `ばんごうふだ${receptionNumber}番をお取りになり、処方せんとおくすり手帳をトレイに入れて、マイナンバーの読み取りをお願いします`
+    : `ばんごうふだ${receptionNumber}番をお取りになり、処方せんをトレイに入れて、マイナンバーの読み取りをお願いします`;
+
   useEffect(() => {
-    speak(
-      `ばんごうふだ${receptionNumber}番をお取りになり、処方せんをトレイに入れて、マイナンバーの読み取りをお願いします`,
-      character
-    );
-    const timer = setTimeout(onComplete, 10000);
-    return () => { clearTimeout(timer); stopSpeaking(); };
-  }, [character, receptionNumber, onComplete]);
+    // 少し遅延して音声再生（画面遷移アニメーション完了後）
+    const speechTimer = setTimeout(() => {
+      speak(speechText, character);
+    }, 500);
+
+    const resetTimer = setTimeout(onComplete, TRANSITION_SECONDS * 1000);
+    return () => {
+      clearTimeout(speechTimer);
+      clearTimeout(resetTimer);
+      stopSpeaking();
+    };
+  }, [character, speechText, onComplete]);
 
   const sparkles = useMemo(() => {
     return Array.from({ length: 8 }, (_, i) => ({
@@ -44,7 +61,6 @@ export default function CompleteScreen({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0 }}
     >
-      {/* キラキラ - CSS animation */}
       {sparkles.map((s, i) => (
         <div
           key={i}
@@ -116,7 +132,7 @@ export default function CompleteScreen({
         <div className="flex flex-col" style={{ gap: "1.2vh" }}>
           <div className="flex items-center gap-3" style={{ fontSize: "clamp(0.9rem, 2vh, 2rem)" }}>
             <span className="shrink-0" style={{ fontSize: "1.2em" }}>📋</span>
-            <span className="font-bold text-[#4a3560]">処方せんをトレイに入れてください</span>
+            <span className="font-bold text-[#4a3560]">{trayText}</span>
           </div>
           <div className="w-full h-[1px] bg-[#e0d4f0]/50" />
           <div className="flex items-center gap-3" style={{ fontSize: "clamp(0.9rem, 2vh, 2rem)" }}>
@@ -126,7 +142,7 @@ export default function CompleteScreen({
         </div>
       </motion.div>
 
-      {/* 進捗バー */}
+      {/* 進捗バー（15秒） */}
       <motion.div
         className="w-full rounded-full bg-[#e0d4f0]/40 overflow-hidden shrink-0"
         style={{ maxWidth: "85vw", height: "0.8vh" }}
@@ -138,7 +154,7 @@ export default function CompleteScreen({
           className="h-full rounded-full bg-gradient-to-r from-[#9b7cc0] to-[#d4699e]"
           initial={{ width: "100%" }}
           animate={{ width: "0%" }}
-          transition={{ duration: 10, ease: "linear" }}
+          transition={{ duration: TRANSITION_SECONDS, ease: "linear" }}
         />
       </motion.div>
     </motion.div>

@@ -232,6 +232,7 @@ export default function KioskPage() {
             key="complete"
             character={state.character}
             receptionNumber={state.receptionNumber}
+            hasMedicineBook={state.hasMedicineBook === true}
             onComplete={handleComplete}
           />
         )}

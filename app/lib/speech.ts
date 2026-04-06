@@ -91,12 +91,15 @@ export async function preloadAllAudio() {
       synthesizeToCache(line, "lunabelle"),
     ]);
   }
-  // 番号付きセリフは1〜30までキャッシュ
+  // 番号付きセリフは1〜30まで、手帳あり/なし両方をキャッシュ
   for (let i = 1; i <= 30; i++) {
-    const text = `ばんごうふだ${i}番をお取りになり、処方せんをトレイに入れて、マイナンバーの読み取りをお願いします`;
+    const withoutBook = `ばんごうふだ${i}番をお取りになり、処方せんをトレイに入れて、マイナンバーの読み取りをお願いします`;
+    const withBook = `ばんごうふだ${i}番をお取りになり、処方せんとおくすり手帳をトレイに入れて、マイナンバーの読み取りをお願いします`;
     await Promise.all([
-      synthesizeToCache(text, "medicoorn"),
-      synthesizeToCache(text, "lunabelle"),
+      synthesizeToCache(withoutBook, "medicoorn"),
+      synthesizeToCache(withoutBook, "lunabelle"),
+      synthesizeToCache(withBook, "medicoorn"),
+      synthesizeToCache(withBook, "lunabelle"),
     ]);
   }
 }
