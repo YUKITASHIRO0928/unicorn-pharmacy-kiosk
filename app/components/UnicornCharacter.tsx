@@ -8,14 +8,15 @@ type UnicornCharacterProps = {
   character: CharacterType;
   pose: PoseType;
   floating?: boolean;
-  size?: number;
+  /** vh単位でサイズ指定（画面高さに対する割合） */
+  sizeVh?: number;
 };
 
 export default function UnicornCharacter({
   character,
   pose,
   floating = true,
-  size = 320,
+  sizeVh = 30,
 }: UnicornCharacterProps) {
   const imageSrc = getCharacterPose(character, pose);
 
@@ -28,14 +29,14 @@ export default function UnicornCharacter({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.3 }}
+          style={{ width: `${sizeVh}vh`, height: `${sizeVh}vh` }}
+          className="relative"
         >
           <Image
             src={imageSrc}
             alt={character}
-            width={size}
-            height={size}
-            className="drop-shadow-lg"
-            style={{ objectFit: "contain" }}
+            fill
+            className="drop-shadow-lg object-contain"
             priority
           />
         </motion.div>

@@ -20,6 +20,11 @@
   --font-mono: var(--font-noto-sans-jp);
 }
 
+html {
+  /* 縦型27インチ(1440x2560)で最適化。画面高さに応じてスケール */
+  font-size: clamp(16px, 1.2vh, 28px);
+}
+
 body {
   background: linear-gradient(170deg, #ede4f5 0%, #f5eef9 25%, #fdf0f5 50%, #eee8f7 75%, #e8e0f3 100%);
   background-attachment: fixed;

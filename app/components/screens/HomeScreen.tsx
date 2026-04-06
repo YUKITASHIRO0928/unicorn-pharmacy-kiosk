@@ -28,15 +28,15 @@ export default function HomeScreen({
 
   return (
     <motion.div
-      className="flex flex-col items-center h-full px-6 relative z-10"
-      style={{ paddingTop: "4vh", paddingBottom: "3vh", gap: "2.5vh" }}
+      className="flex flex-col items-center h-full px-[4vw] relative z-10"
+      style={{ paddingTop: "3vh", paddingBottom: "2vh", gap: "2vh" }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, x: -100 }}
     >
-      {/* 薬局名 */}
       <motion.h1
-        className="text-[2.8rem] font-black tracking-[0.15em] title-text"
+        className="font-black tracking-[0.15em] title-text"
+        style={{ fontSize: "clamp(2rem, 5vh, 5rem)" }}
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1, duration: 0.5 }}
@@ -44,16 +44,13 @@ export default function HomeScreen({
         ユニコーン薬局
       </motion.h1>
 
-      {/* 吹き出し */}
       <SpeechBubble text="こんにちは！ボタンをタッチしてね" show />
 
-      {/* キャラクター */}
       <div className="flex-1 flex items-center justify-center min-h-0">
-        <UnicornCharacter character={character} pose="home" size={280} />
+        <UnicornCharacter character={character} pose="home" sizeVh={32} />
       </div>
 
-      {/* ボタン */}
-      <div className="flex flex-col gap-4 w-full max-w-[460px]">
+      <div className="flex flex-col w-full" style={{ gap: "2vh", maxWidth: "80vw" }}>
         <BigButton
           label="はじめてのかた"
           onClick={onSelectFirst}
@@ -70,11 +67,10 @@ export default function HomeScreen({
         />
       </div>
 
-      {/* キャラ切り替え */}
       <motion.button
         onClick={onToggleCharacter}
-        className="text-base text-[#9b7cc0] font-medium tracking-wide
-          px-5 py-2 rounded-full
+        className="text-[1.2rem] text-[#9b7cc0] font-medium tracking-wide
+          px-6 py-3 rounded-full
           bg-white/50 backdrop-blur-sm
           border border-[#d4c4e8]/40
           hover:bg-white/70 transition-colors"

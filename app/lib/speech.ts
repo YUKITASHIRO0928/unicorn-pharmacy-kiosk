@@ -17,11 +17,10 @@ let currentAudio: HTMLAudioElement | null = null;
 let voicevoxAvailable: boolean | null = null;
 let speakGeneration = 0; // 二重再生防止用
 
-// VOICEVOX接続チェック
+// VOICEVOX接続チェック（毎回チェックし直す。起動タイミングのずれに対応）
 async function checkVoicevox(): Promise<boolean> {
-  if (voicevoxAvailable !== null) return voicevoxAvailable;
   try {
-    const res = await fetch(`${VOICEVOX_BASE}/version`, { signal: AbortSignal.timeout(2000) });
+    const res = await fetch(`${VOICEVOX_BASE}/version`, { signal: AbortSignal.timeout(3000) });
     voicevoxAvailable = res.ok;
   } catch {
     voicevoxAvailable = false;

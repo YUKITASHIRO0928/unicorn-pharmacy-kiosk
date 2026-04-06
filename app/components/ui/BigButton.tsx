@@ -35,7 +35,6 @@ export default function BigButton({
       onClick={onClick}
       className={`
         ${colorMap[color]}
-        ${size === "large" ? "py-7 px-12 text-[2rem]" : "py-5 px-10 text-[1.6rem]"}
         rounded-[1.5rem] font-bold
         w-full
         transition-all duration-200
@@ -45,12 +44,16 @@ export default function BigButton({
         tracking-wide
         leading-snug
       `}
+      style={{
+        padding: size === "large" ? "2.5vh 4vw" : "2vh 3vw",
+        fontSize: size === "large" ? "clamp(1.5rem, 3.5vh, 3.5rem)" : "clamp(1.2rem, 2.8vh, 2.8rem)",
+      }}
       whileTap={{ scale: 0.96, y: 2 }}
       whileHover={{ scale: 1.02, y: -1 }}
       transition={{ type: "spring", stiffness: 400, damping: 17 }}
     >
       <span className="relative z-10 flex items-center justify-center gap-3">
-        {icon && <span className="text-[1.4em]">{icon}</span>}
+        {icon && <span className="text-[1.3em]">{icon}</span>}
         {label}
       </span>
     </motion.button>
