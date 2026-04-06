@@ -135,23 +135,26 @@ async function speakWithVoicevox(text: string, character: CharacterVoice, gen: n
 
     if (!audioUrl) {
       const speakerId = VOICEVOX_SPEAKERS[character];
+      console.log("[voicevox] query start");
       const queryRes = await fetch(
         `${VOICEVOX_BASE}/audio_query?text=${encodeURIComponent(text)}&speaker=${speakerId}`,
-        { method: "POST" }
+        { method: "POST", signal: AbortSignal.timeout(5000) }
       );
       if (!queryRes.ok || gen !== speakGeneration) return false;
       const query = await queryRes.json();
       Object.assign(query, getVoiceParams(character));
 
+      console.log("[voicevox] synthesis start");
       const synthRes = await fetch(
         `${VOICEVOX_BASE}/synthesis?speaker=${speakerId}`,
-        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(query) }
+        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(query), signal: AbortSignal.timeout(10000) }
       );
       if (!synthRes.ok || gen !== speakGeneration) return false;
 
       const blob = await synthRes.blob();
       audioUrl = URL.createObjectURL(blob);
       audioCache.set(key, audioUrl);
+      console.log("[voicevox] synthesis done");
     }
 
     if (gen !== speakGeneration) return false;
@@ -163,8 +166,10 @@ async function speakWithVoicevox(text: string, character: CharacterVoice, gen: n
       if (currentAudio === audio) currentAudio = null;
     };
     await audio.play();
+    console.log("[voicevox] playing");
     return true;
-  } catch {
+  } catch (e) {
+    console.error("[voicevox] error:", e);
     return false;
   }
 }
